@@ -16,7 +16,7 @@ function extractName(data){
 
     //---------contenue de la div---------//
     element.innerHTML = `
-    <a href="#" class= productLink>
+    <a href="product.html?id=${data[i]['_id']}" class= productLink>
     <img width= "350" height="350" src="${data[i]['imageUrl']}" alt="${data[i]['altTxt']}">
     <h3 class="productName">${data[i]['name']}</h3>
     <h2 class="productPrice">${data[i]['price']} €</h2>
