@@ -1,8 +1,14 @@
-function main(){
-  const idNode = document.getElementById("orderId");
-  idNode.innerText = localStorage.getItem("orderId");
-  console.log(localStorage.getItem("orderId"))
-  localStorage.clear();
+function orderIdRecup() {
+	let url = new URL(window.location.href);
+	let searchParams = new URLSearchParams(url.search);
+	if (searchParams.has("orderid")) {
+		let id = searchParams.get("orderid");
+		return id;
+	} else {
+		console.log("Error, no order Id found");
+	}
 }
-
-main();
+window.addEventListener("load", () => {
+	const orderId = document.getElementById("orderId");
+	orderId.innerText = orderIdRecup();
+});
