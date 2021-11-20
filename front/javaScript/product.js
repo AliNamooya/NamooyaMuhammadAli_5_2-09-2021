@@ -1,7 +1,8 @@
+//Récupération de l'id dans l'url
 let str = window.location.href;
 let url = new URL(str);
 let productId = url.searchParams.get("id");
-console.log(productId);
+
 
 
 // Récupération des articles de l'API grace a l'ID. On ajoute l'ID que l'on a recuperer a la fin de l'URl grace a la variable productId a la fin de l'url
@@ -39,8 +40,6 @@ function getProduct() {
 
         // Options de couleur. la boucle for parcours tous les éléments du key = 'colors'
         // La variable productColors insere les options de couleurs dans le HTML (DOM)
-      
-
 
          for (let colors of product.colors){
            console.log(colors);
@@ -48,7 +47,7 @@ function getProduct() {
              document.querySelector("#colors").appendChild(productColors);
              productColors.value = colors;
         productColors.innerHTML = colors;
-     }
+        }
 
 
     });
@@ -56,8 +55,6 @@ function getProduct() {
      const addToCartBtn = document.getElementById("addToCart");
      addToCartBtn.addEventListener("click", () => {
          // Envoyer vers le localStorage
-    
-        
          let productColor = document.getElementById("colors").value;
          let productQuantity = document.getElementById("quantity").value;
          
@@ -90,16 +87,13 @@ function getProduct() {
                  let cartArrayStr = JSON.stringify(cartArray) 
                  localStorage.setItem('productInCart', cartArrayStr)
 
-
-                 // cumuler les quantitées ici
-                 
-             }
+            }
 
 
-             // ouvrir cart.html si tous les éléments sont validés
-                 window.location.href = "./cart.html";
+            // ouvrir cart.html si tous les éléments sont validés
+            window.location.href = "./cart.html";
         }
-     });
-
+    });
 }
+
 getProduct();

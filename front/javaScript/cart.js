@@ -1,36 +1,31 @@
 
-//Penser a mettre les commentaire avant le code pour que ce soit plus lisible
-
-
-
-//fonction qui récupere les données du LocalStorage
+//------------fonction qui récupere les données du LocalStorage--------------
 function getLocalStorage() {
   let produitDansLocalStorage = JSON.parse(localStorage.getItem("productInCart"));
   console.log(produitDansLocalStorage);
 
-  // {id: {col: qt, col:qt}}   pour chaque id il ya un dictionnaire qui contient la couleur et la quanttié, si ces éléments sont pareils, la quantité augmente
-
-  // Creation d'un dictionnaire pour stocker les données 
+  // Creation d'un dictionnaire pour stocker les données
+  // Structure du dictionnaire = {id: {col: qt, col:qt}}  
   let pannier = {};
-  // Boucle for qui permet de récuperer chaque élément du panier  
+
+   // Récupération de l'ID, couleur et quantité
   for(let k = 0; k < produitDansLocalStorage.length; k++) {
-    // récupération de l'ID, couleur et quantité
+    
     let id = produitDansLocalStorage[k][0];
     let col= produitDansLocalStorage[k][1];
-    // ParseInt renvoie un entier au lieu d'une chaine de carctère 
     let qt = parseInt(produitDansLocalStorage[k][2]); 
 
-   // Si le produit est déjà dans le panier 
+   
     if (id in pannier) {
-      if (col in pannier[id]) { // Si la couleur et l'id sont les même, on augmente la quantité
+      // Si la couleur et l'id sont les même, on augmente la quantité
+      if (col in pannier[id]) { 
         pannier[id][col] += qt
       } else {
-        pannier[id][col]  = qt // Sinon la quantité reste le meme
+        pannier[id][col]  = qt // on ajoute une autre couleur
       }
-      // A revoir avec les console log
     } else {
       pannier[id] = {};
-      pannier[id][col] = qt;
+      pannier[id][col] = qt; // si l'élément n'est pas dans le panier, on ajoute le produit (son id et sa couler ainsi que la quantité)
     }
     
     
@@ -39,11 +34,13 @@ function getLocalStorage() {
   return pannier
 }
 
-//fonction qui envoie les données vers le localStorage
+//------------fonction qui envoie les données vers le localStorage---------------
 function setLocalStorage(pannier) {
+  // On prend en paramètre le dictionnaire contenant les éléments 
+  
   // On recrée le tableau du localStorage
+  // On push les éléments dans le localStorage 
   produitDansLocalStorage = []
-  // A revoir avec les console log
   for (id in pannier) {
     for (col in pannier[id]) {
       produitDansLocalStorage.push( [id, col, pannier[id][col] ] )
@@ -52,12 +49,12 @@ function setLocalStorage(pannier) {
   localStorage.setItem("productInCart", JSON.stringify(produitDansLocalStorage));
 }
 
-//On recupere les éléments du localStorage pour les stocker dans la variable pannier
+//On récupère les éléments du localStorage pour les stocker dans la variable pannier
 let pannier = getLocalStorage();
 //On se positionne dans le HTML
 const positionHtml = document.querySelector('#cart__items');
 
-//si le panier est vide on affiche
+//si le panier est vide on affiche "le panier est vide"
 if ( Object.keys(pannier).length === 0 ){
   positionHtml.innerHTML = `  <H2>Le panier est vide</H2>  `;
   document.querySelector("#totalPrice").innerHTML = 0;
@@ -68,6 +65,7 @@ if ( Object.keys(pannier).length === 0 ){
   let totalProduct = 0;
 
   for (let id in pannier) {
+    //On récupère les informations complémentaires via l'API
       fetch("http://localhost:3000/api/products/" + id)
       .then((response)=>response.json())
       .then((data)=>{
@@ -89,12 +87,8 @@ if ( Object.keys(pannier).length === 0 ){
     
 }
 
-//------------------------------Affichage des éléments dans le code HTML-----------------------------
+//----------------Affichage des éléments dans le code HTML-----------------
 function showProduct(data, color, quantity){
-  
-  let totalPerProduct = data.price * quantity;
-
-  
 
   return `
          <article class="cart__item" data-id="${data._id}" data-color="${color}">
@@ -105,7 +99,7 @@ function showProduct(data, color, quantity){
                    <div class="cart__item__content__titlePrice">
                      <h2>${data.name}</h2>
                      <p>${color}</p>
-                     <p id="price">${totalPerProduct}.00 €</p>
+                     <p id="price">${data.price}.00 €</p>
                    </div>
                    <div class="cart__item__content__settings">
                      <div class="cart__item__content__settings__quantity">
@@ -126,13 +120,17 @@ function showProduct(data, color, quantity){
 //----------------------Modification de la quantité dans le panier----------------------
 function changeQuantity(id, col){
   const input_id = `qty_${id}_${col}`;
-  const input = document.querySelector('input[type="number"]#'+input_id) //Comme avec le 'on click' on traque le changement de valeur 
-  const new_qty = input.value    //On stock la nouvelle valeur dans cett variable 
+  const input = document.querySelector('input[type="number"]#'+input_id) 
+  //Nouvelle valeur 
+  const new_qty = input.value    
 
+  //On met la nouvelle valuer dans le local storage
   let pannier = getLocalStorage()
   pannier[id][col] = new_qty;
-  setLocalStorage(pannier); //On met la nouvelle valuer dans le local storage
-  location.reload(); //lorsqu'on reload, ca change le total du panier 
+  setLocalStorage(pannier); 
+
+  //lorsqu'on reload, le total se met a jour
+  location.reload(); 
 } 
 
 
@@ -141,6 +139,7 @@ function deleteProduct(id, col){
   pannier = getLocalStorage();
   delete pannier[id][col];
   setLocalStorage(pannier)
+  // Raffraichir pour mettre a jour le changements
   location.reload()
 }
 
@@ -156,13 +155,16 @@ form.firstName.addEventListener('change', function(){
 });
 const validfirstName = function(inputfirstName){
  
+  //regExp = lettre minuscule et majuscule de a à z, entre 3 et 20 caractères
   let firstNameRegExp = new RegExp ("^[A-Za-z ,']{3,20}$", 'g');
   let errorMsg = document.querySelector('#firstNameErrorMsg');
 
+  // Si les conditions sont remplie, renvoyer "true"
   if(firstNameRegExp.test(inputfirstName.value)){
     errorMsg.innerHTML= ""
     return true;
   }
+  //Sinon affichage du message d'erreur 
   else{
     errorMsg.innerHTML= "Prénom non valide"
   }
@@ -251,16 +253,20 @@ const validEmail = function(inputEmail){
 
 //---------------------Soumission du formulaire---------------------
 form.addEventListener('submit', function(e){
-  //par defaut rien ne se passe lorqu'on appuie sur submit
   e.preventDefault();
   // si tout les éléments sont true, le bouton commande renvoit vers la page confirmation 
-  if(validfirstName(form.firstName) && validlastName(form.lastName) && validAddress(form.address) && validCity(form.city) && validEmail(form.email)){
+  if(validfirstName(form.firstName) && 
+     validlastName(form.lastName) && 
+     validAddress(form.address) && 
+     validCity(form.city) && 
+     validEmail(form.email)){
     recupInfoForm(this);
   }
 });
 
 function recupInfoForm(form) {
   const pannier = getLocalStorage();
+  //Stockage des informations du formulaire
   const body = {
     'contact': {
       'firstName': form.firstName.value,
@@ -269,13 +275,14 @@ function recupInfoForm(form) {
       'city'     : form.city.value,
       'email'    : form.email.value,
     },
+    //Stockage des produits du panier
     'products': Object.keys(pannier)
   }
 
   console.log(body);
 
 
-
+  //Récuperer l'orderID dans le back-end
   fetch('http://localhost:3000/api/products/order', {
     method: 'POST',
     headers: {
