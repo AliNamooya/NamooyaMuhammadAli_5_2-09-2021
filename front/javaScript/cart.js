@@ -279,8 +279,6 @@ function recupInfoForm(form) {
     'products': Object.keys(pannier)
   }
 
-  console.log(body);
-
 
   //Récuperer l'orderID dans le back-end
   fetch('http://localhost:3000/api/products/order', {

@@ -12,14 +12,14 @@ function extractName(data){
   for (let i = 0; i < data.length; i++) {
 
     //div contenant les éléments HTML
-    let element = document.createElement('div');  
+    let element = document.createElement('article');  
 
     //---------contenue de la div---------
     element.innerHTML = `
     <a href="product.html?id=${data[i]['_id']}" class= productLink>
-    <img width= "350" height="350" src="${data[i]['imageUrl']}" alt="${data[i]['altTxt']}">
+    <img src="${data[i]['imageUrl']}" alt="${data[i]['altTxt']}">
     <h3 class="productName">${data[i]['name']}</h3>
-    <h2 class="productPrice">${data[i]['price']} €</h2>
+    <p class="productDescription">${data[i]['description']}</p>
     </a>
     `  
     items.appendChild(element) //insérer l'élement dans le HTML
